@@ -1,1 +1,6 @@
-# pwa-progress
+# Progress
+
+```
+$ yarn install
+$ yarn web
+```
