@@ -24,11 +24,8 @@ jobs:
       - name: Build and export
         run: npm run build
 
-      - name: Post process
-        run: ./postbuild.sh
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./web-build
+          publish_dir: ./out
