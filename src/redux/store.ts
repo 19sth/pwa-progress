@@ -11,7 +11,9 @@ const localStorageMiddleware = ({ getState }:{getState: ()=> any}) => {
 
 const reHydrateStore = () => {
   let strJson = '{}';
-  strJson = localStorage.getItem('applicationState') || '{}';
+  try {
+    strJson = localStorage.getItem('applicationState') || '{}';
+  } catch (error) {}
   return JSON.parse(strJson);
 };
 
