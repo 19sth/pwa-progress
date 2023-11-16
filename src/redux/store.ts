@@ -11,9 +11,11 @@ const localStorageMiddleware = ({ getState }:{getState: ()=> any}) => {
 
 const reHydrateStore = () => {
   let strJson = '{}';
-  try {
+//TOGGLE-COMMENT
+//  if (typeof window !== 'undefined') {
     strJson = localStorage.getItem('applicationState') || '{}';
-  } catch (error) {}
+//TOGGLE-COMMENT
+//  }
   return JSON.parse(strJson);
 };
 

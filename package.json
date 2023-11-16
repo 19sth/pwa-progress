@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node .cmtout.js next.config.js src/redux/store.ts && next build && node .cmtout.js next.config.js src/redux/store.ts",
     "start": "next start",
     "lint": "next lint"
   },

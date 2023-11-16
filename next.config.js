@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export'
+    output: 'export',
+//TOGGLE-COMMENT
+//    assetPrefix: 'https://19sth.github.io/pwa-progress'
 }
 
 module.exports = nextConfig
