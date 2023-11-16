@@ -1,0 +1,17 @@
+{
+    "name": "Progress",
+    "short_name": "Progress",
+    "description": "Progress",
+    "start_url": "/pwa-progress",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#fde047",
+    "icons": [
+      {
+        "src": "https://fakeimg.pl/192x192/fde047/000/?font=bebas&font_size=192&retina=1&text=P",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ]
+  }
+  
