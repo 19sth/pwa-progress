@@ -21,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <title>{APP_NAME}</title>
+        <link rel="manifest" href="/pwa-progress/manifest.json"></link>
       </head>
       <body className={inter.className}>
         <ReduxProvider>
