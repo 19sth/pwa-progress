@@ -1,17 +1,25 @@
 {
-    "name": "Progress",
-    "short_name": "Progress",
-    "description": "Progress",
-    "start_url": "/pwa-progress",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#fde047",
-    "icons": [
-      {
-        "src": "https://fakeimg.pl/192x192/fde047/000/?font=bebas&font_size=192&retina=1&text=P",
-        "sizes": "192x192",
-        "type": "image/png"
-      }
-    ]
-  }
-  
+  "short_name": "Progress",
+  "name": "Progress",
+  "start_url": "/pwa-progress",
+  "display": "standalone",
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "icons": [
+    {
+      "src": "https://fakeimg.pl/16x16/fde047/000/?font=bebas&font_size=16&text=P",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://fakeimg.pl/192x192/fde047/000/?font=bebas&font_size=192&text=P",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://fakeimg.pl/512x512/fde047/000/?font=bebas&font_size=512&text=P",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
