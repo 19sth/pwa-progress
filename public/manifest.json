@@ -1,6 +1,7 @@
 {
   "short_name": "Progress",
   "name": "Progress",
+  "description" : "",
   "start_url": "/pwa-progress",
   "display": "standalone",
   "theme_color": "#fefefe",
