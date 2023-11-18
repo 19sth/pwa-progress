@@ -22,7 +22,7 @@ export default function Main() {
     const now = new Date();
     let localActiveStep = 0;
     for (let i=0; i<23; i++) {
-        if (now.getHours() == i) {
+        if (now.getHours() === i) {
             localActiveStep = (now.getMinutes() < 30)? i*2 : i*2+1
         }
         localSteps.push({
