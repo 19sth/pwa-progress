@@ -1,21 +1,20 @@
 import { Action, Dispatch, configureStore } from "@reduxjs/toolkit";
 import pageReducer from "./slicePage";
 
-const localStorageMiddleware = ({ getState }:{getState: ()=> any}) => {
+const localStorageMiddleware = ({ getState }: { getState: () => any }) => {
   return (next: Dispatch) => (action: Action) => {
     const result = next(action);
-    localStorage.setItem('applicationState', JSON.stringify(getState()));
+    localStorage.setItem("applicationState", JSON.stringify(getState()));
     return result;
   };
 };
 
 const reHydrateStore = () => {
-  let strJson = '{}';
-//TOGGLE-COMMENT
-//  if (typeof window !== 'undefined') {
-    strJson = localStorage.getItem('applicationState') || '{}';
-//TOGGLE-COMMENT
-//  }
+  let strJson = "{}";
+
+  if (typeof window !== "undefined") {
+    strJson = localStorage.getItem("applicationState") || "{}";
+  }
   return JSON.parse(strJson);
 };
 
@@ -24,8 +23,8 @@ export const store = configureStore({
     page: pageReducer,
   },
   preloadedState: reHydrateStore(),
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(localStorageMiddleware)
+  middleware: (getDefaultMiddleware: any) =>
+    getDefaultMiddleware().concat(localStorageMiddleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

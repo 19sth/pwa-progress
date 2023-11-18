@@ -1,25 +1,31 @@
-import { INavItem } from '@/components/Layout'
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { INavItem } from "../components/Layout";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { APP_NAME } from "../utils/constants";
 
 export interface PageState {
-  navItems: INavItem[]
+  navItems: INavItem[];
+  title: string;
 }
 
 const initialState: PageState = {
-  navItems: []
-}
+  navItems: [],
+  title: "",
+};
 
 export const pageSlice = createSlice({
-name: 'page',
+  name: "page",
   initialState,
   reducers: {
     updatePageState: (state, action: PayloadAction<PageState>) => {
       state.navItems = action.payload.navItems;
+      state.title = `${APP_NAME} ${
+        action.payload.title ? " - " + action.payload.title : ""
+      }`.toLowerCase();
     },
   },
-})
+});
 
-export const { updatePageState } = pageSlice.actions
+export const { updatePageState } = pageSlice.actions;
 
-export default pageSlice.reducer
+export default pageSlice.reducer;
