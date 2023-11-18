@@ -8,7 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/pwa-progress/" element={<Layout />}>
           <Route index element={<Main />} />
           <Route path="about" element={<About />} />
         </Route>

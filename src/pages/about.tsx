@@ -7,7 +7,7 @@ export default function About() {
     useEffect(()=>{
         dispatch(updatePageState({
             navItems: [
-                {icon: "Info", link: "/"},
+                {icon: "Info", link: "./"},
             ],
             title: "about"
         }));

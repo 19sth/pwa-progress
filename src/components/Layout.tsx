@@ -17,7 +17,7 @@ import { APP_NAME } from "../utils/constants";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const iconsMap = {
   Info: icons.Info,
@@ -42,7 +42,7 @@ export default function Layout() {
       <AppBar sx={{ boxShadow: 0 }}>
         <Container maxWidth="sm">
           <Toolbar disableGutters>
-            <a className="grow" href="/">
+            <Link className="grow" to={"./"}>
               <Typography
                 className="underline decoration-4 decoration-yellow-300"
                 variant="h4"
@@ -50,16 +50,16 @@ export default function Layout() {
               >
                 {APP_NAME}.
               </Typography>
-            </a>
+            </Link>
             <Box>
               {pageState.navItems.map((item: INavItem, ix: number) => {
                 const IconClass = iconsMap[item.icon] || icons.QuestionMark;
                 return (
-                  <a key={`nav_button_${ix}`} href={item.link}>
+                  <Link key={`nav_button_${ix}`} to={item.link}>
                     <IconButton>
                       <IconClass className="text-black" />
                     </IconButton>
-                  </a>
+                  </Link>
                 );
               })}
             </Box>
