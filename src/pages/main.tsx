@@ -7,18 +7,18 @@ import { Card, Step, StepLabel, Stepper, SvgIconTypeMap } from "@mui/material";
 import { CheckBoxOutlineBlank } from "@mui/icons-material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 
-interface Step {
+interface IStep {
     label: string
     icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
 }
 
 export default function Main() {
   const dispatch = useDispatch();
-  const [steps, setSteps] = useState([] as Step[]);
+  const [steps, setSteps] = useState([] as IStep[]);
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(()=>{
-    const localSteps = [] as Step[];
+    const localSteps = [] as IStep[];
     const now = new Date();
     let localActiveStep = 0;
     for (let i=0; i<23; i++) {
