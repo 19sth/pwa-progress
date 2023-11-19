@@ -3,6 +3,7 @@ import './App.css';
 import Layout from './components/Layout';
 import Main from './pages/main';
 import About from './pages/about';
+import Add from './pages/add';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/pwa-progress/" element={<Layout />}>
           <Route index element={<Main />} />
           <Route path="about" element={<About />} />
+          <Route path="add" element={<Add />} />
         </Route>
       </Routes>
     </BrowserRouter>

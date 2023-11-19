@@ -39,7 +39,7 @@ export default function Layout() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar sx={{ boxShadow: 0 }}>
+      <AppBar sx={{ boxShadow: 0, bgcolor: "#fff", color: "#000" }}>
         <Container maxWidth="sm">
           <Toolbar disableGutters>
             <Link className="grow" to={"./"}>

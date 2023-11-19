@@ -41,7 +41,7 @@ export default function Main() {
   useEffect(() => {
     dispatch(
       updatePageState({
-        navItems: [{ icon: "Info", link: "./about" }],
+        navItems: [{ icon: "Info", link: "./about" },{ icon: "Add", link: "./add" }],
         title: "",
       })
     );
