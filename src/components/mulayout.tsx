@@ -40,9 +40,12 @@ export default function MuLayout() {
     undefined as string | undefined
   );
   const pageState = useSelector((state: RootState) => state.page);
+
+  /* eslint-disable */
   const notifications = [
     useSelector((state: RootState) => state.tasks),
   ] as INotifyingState[];
+  /* eslint-enable */
 
   useEffect(() => {
     document.title = pageState.title;
