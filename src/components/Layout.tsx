@@ -1,17 +1,16 @@
-"use client";
-
 import theme from "../utils/theme";
 import {
   AppBar,
   Box,
   Container,
   IconButton,
+  Snackbar,
   SvgIconTypeMap,
   ThemeProvider,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as icons from "@mui/icons-material";
 import { APP_NAME } from "../utils/constants";
 import { RootState } from "../redux/store";
@@ -22,7 +21,7 @@ import { Link, Outlet } from "react-router-dom";
 const iconsMap = {
   Info: icons.Info,
   Save: icons.Save,
-  Add: icons.AddCircle
+  Add: icons.AddCircle,
 } as Record<string, OverridableComponent<SvgIconTypeMap<{}, "svg">>>;
 
 export interface INavItem {
@@ -30,12 +29,41 @@ export interface INavItem {
   link: string;
 }
 
-export default function Layout() {
-  const pageState = useSelector((state: RootState) => state.page);
+export interface INotifyingState {
+  notificationMessage: string;
+  notificationIsoDt: string;
+}
 
-  useEffect(()=>{
+export default function Layout() {
+  const [notify, setNotify] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState(
+    undefined as string | undefined
+  );
+  const pageState = useSelector((state: RootState) => state.page);
+  const notifications = [
+    useSelector((state: RootState) => state.tasks),
+  ] as INotifyingState[];
+
+  useEffect(() => {
     document.title = pageState.title;
   }, [pageState]);
+
+  useEffect(() => {
+    setNotify(false);
+    const lNotifications = [...notifications];
+    const latestNotification = lNotifications.sort((a, b) =>
+      a.notificationIsoDt > b.notificationIsoDt ? 1 : -1
+    )[0];
+    const now = new Date();
+    if (
+      now.getTime() - new Date(latestNotification.notificationIsoDt).getTime() <
+      5000
+    ) {
+      setNotify(false);
+      setNotificationMessage(latestNotification.notificationMessage);
+      setNotify(true);
+    }
+  }, [...notifications]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -67,8 +95,16 @@ export default function Layout() {
         </Container>
       </AppBar>
 
-      <Container maxWidth="sm" className="min-h-screen pt-20">
+      <Container maxWidth="sm" className="min-h-screen pt-28">
         <Outlet />
+        <Snackbar
+          open={notify}
+          autoHideDuration={6000}
+          onClose={() => {
+            setNotify(false);
+          }}
+          message={notificationMessage}
+        />
       </Container>
     </ThemeProvider>
   );

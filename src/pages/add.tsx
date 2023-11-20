@@ -7,10 +7,15 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  Slider,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
+import MuSlider from "../components/slider";
+import Takoz from "../components/takoz";
+import { useDispatch } from "react-redux";
+import { addTask } from "../redux/sliceTasks";
+import { useNavigate } from "react-router-dom";
+
 
 const days = [
   { label: "Monday", value: 0 },
@@ -23,12 +28,23 @@ const days = [
 ];
 
 export default function Add() {
+  const [name, setName] = useState("");
   const [selectedDays, setSelectedDays] = useState([] as number[]);
+  const [duration, setDuration] = useState(20);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
-    <div className="px-5">
-      <TextField label="Name" className="w-full" />
-      <div className="h-5"></div>
+    <div className="px-2">
+      <TextField
+        label="Name"
+        className="w-full"
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+        }}
+      />
+      <Takoz />
 
       <FormControl className="w-full">
         <InputLabel>Days</InputLabel>
@@ -60,23 +76,39 @@ export default function Add() {
           ))}
         </Select>
       </FormControl>
-      <div className="h-3"></div>
+      <Takoz />
 
-      <FormControl className="w-full">
-        <InputLabel>Duration (mins)</InputLabel>
-        <Slider
-          className="mt-9"
-          defaultValue={60}
-          valueLabelDisplay="auto"
-          step={20}
-          marks
-          min={20}
-          max={300}
-        />
-      </FormControl>
-      <div className="h-32"></div>
+      <MuSlider
+        defaultValue={60}
+        min={20}
+        max={300}
+        step={20}
+        value={duration}
+        onChange={(e) => {
+          setDuration(e.target.value);
+        }}
+        label="Duration"
+        unit="mins"
+      />
+      <Takoz height={"8rem"} />
 
-      <Button className="w-full" variant="outlined" size="large">Add New Task</Button>
+      <Button
+        className="w-full"
+        variant="contained"
+        size="large"
+        onClick={() => {
+          dispatch(
+            addTask({
+              name,
+              days: selectedDays,
+              duration,
+            })
+          );
+          navigate(-1);
+        }}
+      >
+        Add New Task
+      </Button>
     </div>
   );
 }
