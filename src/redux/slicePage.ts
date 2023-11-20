@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { APP_NAME } from "../utils/constants";
-import { INavItem } from "../components/layout";
+import { INavItem } from "../components/mulayout";
 
 export interface PageState {
   navItems: INavItem[];

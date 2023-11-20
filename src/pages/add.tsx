@@ -10,8 +10,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import MuSlider from "../components/slider";
-import Takoz from "../components/takoz";
+import MuSlider from "../components/muslider";
+import MuTakoz from "../components/mutakoz";
 import { useDispatch } from "react-redux";
 import { addTask } from "../redux/sliceTasks";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ export default function Add() {
           setName(e.target.value);
         }}
       />
-      <Takoz />
+      <MuTakoz />
 
       <FormControl className="w-full">
         <InputLabel>Days</InputLabel>
@@ -76,7 +76,7 @@ export default function Add() {
           ))}
         </Select>
       </FormControl>
-      <Takoz />
+      <MuTakoz />
 
       <MuSlider
         defaultValue={60}
@@ -90,7 +90,7 @@ export default function Add() {
         label="Duration"
         unit="mins"
       />
-      <Takoz height={"8rem"} />
+      <MuTakoz height={"8rem"} />
 
       <Button
         className="w-full"

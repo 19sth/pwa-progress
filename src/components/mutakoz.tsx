@@ -4,7 +4,7 @@ export interface ITakozProps {
     height?: number | string
 }
 
-export default function Takoz(props: Readonly<ITakozProps>){
+export default function MuTakoz(props: Readonly<ITakozProps>){
     return (
         <div style={{
             width: props.width ?? "2rem",

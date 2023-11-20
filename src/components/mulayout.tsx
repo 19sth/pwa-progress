@@ -34,7 +34,7 @@ export interface INotifyingState {
   notificationIsoDt: string;
 }
 
-export default function Layout() {
+export default function MuLayout() {
   const [notify, setNotify] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState(
     undefined as string | undefined

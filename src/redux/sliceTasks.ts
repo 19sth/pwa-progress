@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { INotifyingState } from "../components/layout";
+import { INotifyingState } from "../components/mulayout";
 
 export interface ITask {
   id?: number
