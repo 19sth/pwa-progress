@@ -63,7 +63,7 @@ export default function MuLayout() {
       setNotificationMessage(latestNotification.notificationMessage);
       setNotify(true);
     }
-  }, [...notifications]);
+  }, [notifications]);
 
   return (
     <ThemeProvider theme={theme}>
