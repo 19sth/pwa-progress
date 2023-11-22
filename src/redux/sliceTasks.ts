@@ -7,6 +7,8 @@ export interface ITask {
   name: string
   days: number[]
   duration: number
+  color: string
+  startIsoDate: string
 }
 
 export interface TasksState extends INotifyingState {

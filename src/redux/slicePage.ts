@@ -23,9 +23,10 @@ export const pageSlice = createSlice({
         action.payload.title ? " - " + action.payload.title : ""
       }`.toLowerCase();
     },
+    clearAllRedux: (state, action: PayloadAction<boolean>) => {},
   },
 });
 
-export const { updatePageState } = pageSlice.actions;
+export const { updatePageState, clearAllRedux } = pageSlice.actions;
 
 export default pageSlice.reducer;

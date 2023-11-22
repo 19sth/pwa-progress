@@ -22,6 +22,8 @@ const iconsMap = {
   Info: icons.Info,
   Save: icons.Save,
   Add: icons.AddCircle,
+  List: icons.FormatListBulleted,
+  ImportExport: icons.ImportExport
 } as Record<string, OverridableComponent<SvgIconTypeMap<{}, "svg">>>;
 
 export interface INavItem {
@@ -98,9 +100,10 @@ export default function MuLayout() {
         </Container>
       </AppBar>
 
-      <Container maxWidth="sm" className="min-h-screen pt-28">
+      <Container maxWidth="sm" className="min-h-screen pt-20">
         <Outlet />
         <Snackbar
+          className="mb-10"
           open={notify}
           autoHideDuration={6000}
           onClose={() => {
