@@ -11,6 +11,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { DAYS } from "../utils/constants";
+import { Link } from "react-router-dom";
 
 export default function TaskList() {
   const tasks = useSelector((rootState: RootState) => rootState.tasks.tasks);
@@ -33,28 +34,31 @@ export default function TaskList() {
     <div>
       <List>
         {tasks.map((e) => (
-          <ListItemButton
-            key={`task_item_${e.id}`}
-            component="a"
-            href={`./task-detail/${e.id}`}
-          >
-            <ListItemIcon>
-              <Box
-                className="h-5 w-5 rounded-full border-2 border-black"
-                sx={{ backgroundColor: e.color }}
-              ></Box>
-            </ListItemIcon>
-            <ListItemText
-              primary={e.name}
-              secondary={
-                e.days.map((day) =>
-                  DAYS.filter(
-                    (dayInner) => dayInner.value === day
-                  )[0].label.slice(0, 3)
-                ).join(",") + " > " + e.duration.toString() + " mins."
-              }
-            />
-          </ListItemButton>
+          <Link key={`task_item_${e.id}`} to={`../task-detail/${e.id}`}>
+            <ListItemButton>
+              <ListItemIcon>
+                <Box
+                  className="h-5 w-5 rounded-full border-2 border-black"
+                  sx={{ backgroundColor: e.color }}
+                ></Box>
+              </ListItemIcon>
+              <ListItemText
+                primary={e.name}
+                secondary={
+                  e.days
+                    .map((day) =>
+                      DAYS.filter(
+                        (dayInner) => dayInner.value === day
+                      )[0].label.slice(0, 3)
+                    )
+                    .join(",") +
+                  " > " +
+                  e.duration.toString() +
+                  " mins."
+                }
+              />
+            </ListItemButton>
+          </Link>
         ))}
         <ListItem></ListItem>
       </List>
