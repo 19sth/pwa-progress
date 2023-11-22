@@ -10,7 +10,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import CircleIcon from "@mui/icons-material/Circle";
 import { DAYS } from "../utils/constants";
 
 export default function TaskList() {
@@ -24,7 +23,7 @@ export default function TaskList() {
         title: "tasks",
       })
     );
-  }, []);
+  }, [dispatch]);
 
   if (tasks.length < 1) {
     return <div className="w-full text-center">There is no defined task.</div>;

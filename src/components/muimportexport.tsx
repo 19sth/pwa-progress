@@ -1,14 +1,12 @@
 import { Button, IconButton, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { clearAllRedux, updatePageState } from "../redux/slicePage";
+import { updatePageState } from "../redux/slicePage";
 import { ContentCopy } from "@mui/icons-material";
 import MuTakoz from "./mutakoz";
-import { useNavigate } from "react-router-dom";
 
 export default function MuImportExport() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [appData, setAppData] = useState("");
 
