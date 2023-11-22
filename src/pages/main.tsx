@@ -2,10 +2,12 @@ import {
   CheckCircleOutline,
   ChevronLeft,
   ChevronRight,
+  LightMode,
   RadioButtonUnchecked,
-  Refresh
+  Refresh,
 } from "@mui/icons-material";
 import {
+  Avatar,
   Button,
   ButtonGroup,
   Container,
@@ -13,6 +15,10 @@ import {
   FormControl,
   IconButton,
   InputLabel,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
   MenuItem,
   Modal,
   OutlinedInput,
@@ -27,6 +33,9 @@ import { updatePageState } from "../redux/slicePage";
 import { ITaskLog, addTaskLog } from "../redux/sliceTaskLogs";
 import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
+import { DAYS } from "../utils/constants";
+import { Link } from "react-router-dom";
+import MuTakoz from "../components/mutakoz";
 
 interface IStep {
   label: string;
@@ -71,7 +80,8 @@ function convertSlotToTimeString(slotId: number) {
 function getPossibleTasks(tasks: ITask[], targetDate: Date) {
   const targetIsoDate = targetDate.toISOString();
   return tasks.filter(
-    (e) => e.startIsoDate <= targetIsoDate && e.days.includes(getDay(targetDate))
+    (e) =>
+      e.startIsoDate <= targetIsoDate && e.days.includes(getDay(targetDate))
   );
 }
 
@@ -96,14 +106,16 @@ function calculateDailyTaskAnalytics(
     });
   }
 
-  return taskAnalyticsList
+  return taskAnalyticsList;
 }
 
 export default function Main() {
   const [targetDate, setTargetDate] = useState(startOfDay(new Date()));
   const [showTargetDate, setShowTargetDate] = useState(true);
   const [showTimeSlotLine, setShowTimeSlotLine] = useState(false);
-  const [dailyTaskAnalytics, setDailyTaskAnalytics] = useState([] as ITaskAnalytics[]);
+  const [dailyTaskAnalytics, setDailyTaskAnalytics] = useState(
+    [] as ITaskAnalytics[]
+  );
   const tasks = useSelector((rootState: RootState) => rootState.tasks.tasks);
   const taskLogs = useSelector(
     (rootState: RootState) => rootState.taskLogs.taskLogs
@@ -152,8 +164,9 @@ export default function Main() {
       }, 700);
     }, 100);
 
-    setDailyTaskAnalytics(calculateDailyTaskAnalytics(tasks,lTaskLogs,targetDate))
-
+    setDailyTaskAnalytics(
+      calculateDailyTaskAnalytics(tasks, lTaskLogs, targetDate)
+    );
   }, [taskLogs, tasks, targetDate]);
 
   useEffect(() => {
@@ -245,13 +258,27 @@ export default function Main() {
         </div>
       </Fade>
 
-      <div>
-        {dailyTaskAnalytics.map(e=>(
-          <div>
-            {e.task.name} {e.completed} {e.total}
-          </div>
+      <MuTakoz/>
+
+      <List>
+        {dailyTaskAnalytics.map((e) => (
+          <Link key={`task_item_${e.task.id}`} to={`./task-detail/${e.task.id}`}>
+            <ListItemButton>
+              <ListItemAvatar>
+                <Avatar sx={{ bgcolor: e.task.color }}>
+                  <LightMode sx={{ color: "black" }} />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={e.task.name}
+                secondary={
+                  e.completed.toString() + " / " + e.total.toString()
+                }
+              />
+            </ListItemButton>
+          </Link>
         ))}
-      </div>
+      </List>
 
       <Modal
         open={showModal}

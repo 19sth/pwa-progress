@@ -1,17 +1,17 @@
+import { LightMode } from "@mui/icons-material";
+import {
+  Avatar,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText
+} from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { updatePageState } from "../redux/slicePage";
 import { RootState } from "../redux/store";
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
 import { DAYS } from "../utils/constants";
-import { Link } from "react-router-dom";
 
 export default function TaskList() {
   const tasks = useSelector((rootState: RootState) => rootState.tasks.tasks);
@@ -36,12 +36,11 @@ export default function TaskList() {
         {tasks.map((e) => (
           <Link key={`task_item_${e.id}`} to={`../task-detail/${e.id}`}>
             <ListItemButton>
-              <ListItemIcon>
-                <Box
-                  className="h-5 w-5 rounded-full border-2 border-black"
-                  sx={{ backgroundColor: e.color }}
-                ></Box>
-              </ListItemIcon>
+              <ListItemAvatar>
+                <Avatar sx={{bgcolor: e.color}}>
+                  <LightMode sx={{color: "black"}}/>
+                </Avatar>
+              </ListItemAvatar>
               <ListItemText
                 primary={e.name}
                 secondary={
@@ -60,7 +59,6 @@ export default function TaskList() {
             </ListItemButton>
           </Link>
         ))}
-        <ListItem></ListItem>
       </List>
     </div>
   );

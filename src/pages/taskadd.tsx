@@ -21,15 +21,16 @@ import { startOfDay } from "date-fns";
 
 
 const colors = [
-  { label: "Red", value: "#ffadad"},
-  { label: "Orange", value: "#ffd6a5"},
-  { label: "Yellow", value: "#fdffb6"},
-  { label: "Green", value: "#caffbf"},
-  { label: "Blue", value: "#9bf6ff"},
-  { label: "Dark Blue", value: "#a0c4ff"},
-  { label: "Purple", value: "#bdb2ff"},
-  { label: "Pink", value: "#ffc6ff"},
-]
+  { label: "Red", value: "#ffb3b3" },
+  { label: "Orange", value: "#ffd699" },
+  { label: "Yellow", value: "#fff4b3" },
+  { label: "Green", value: "#c2f0c2" },
+  { label: "Blue", value: "#b3ecff" },
+  { label: "Dark Blue", value: "#b3c6e7" },
+  { label: "Purple", value: "#d9d2e9" },
+  { label: "Pink", value: "#ffd9eb" },
+];
+
 
 export default function TaskAdd() {
   const [name, setName] = useState("");
