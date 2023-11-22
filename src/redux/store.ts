@@ -1,6 +1,7 @@
 import { Action, Dispatch, configureStore } from "@reduxjs/toolkit";
 import pageReducer from "./slicePage";
 import tasksReducer from "./sliceTasks";
+import taskLogsReducer from "./sliceTaskLogs";
 
 const localStorageMiddleware = ({ getState }: { getState: () => any }) => {
   return (next: Dispatch) => (action: Action) => {
@@ -19,7 +20,8 @@ const reHydrateStore = () => {
 export const store = configureStore({
   reducer: {
     page: pageReducer,
-    tasks: tasksReducer
+    tasks: tasksReducer,
+    taskLogs: taskLogsReducer
   },
   preloadedState: reHydrateStore(),
   middleware: (getDefaultMiddleware: any) =>

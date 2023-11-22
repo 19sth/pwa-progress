@@ -4,7 +4,7 @@ import { RootState } from "../redux/store";
 import { useEffect, useState } from "react";
 import { ITask, removeTask } from "../redux/sliceTasks";
 import { updatePageState } from "../redux/slicePage";
-import { Box, Button, ButtonGroup, Modal, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Container, Modal, Typography } from "@mui/material";
 import MuTakoz from "../components/mutakoz";
 
 export default function TaskDetail() {
@@ -57,7 +57,7 @@ export default function TaskDetail() {
         aria-describedby="modal-modal-description"
         className="flex justify-center items-center p-2"
       >
-        <Box className="w-full bg-white rounded px-2 py-5 flex flex-col items-center">
+        <Container maxWidth="sm" className="w-full bg-white rounded px-2 py-5 flex flex-col items-center">
           <Typography>Will you delete this task?</Typography>
           <MuTakoz/>
           <ButtonGroup variant="text">
@@ -73,7 +73,7 @@ export default function TaskDetail() {
               Cancel
             </Button>
           </ButtonGroup>
-        </Box>
+        </Container>
       </Modal>
     </div>
   );
