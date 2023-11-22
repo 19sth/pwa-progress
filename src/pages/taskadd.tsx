@@ -17,6 +17,7 @@ import { addTask } from "../redux/sliceTasks";
 import { useNavigate } from "react-router-dom";
 import CircleIcon from '@mui/icons-material/Circle';
 import { DAYS } from "../utils/constants";
+import { startOfDay } from "date-fns";
 
 
 const colors = [
@@ -135,7 +136,7 @@ export default function TaskAdd() {
               days: selectedDays,
               duration,
               color,
-              startIsoDate: new Date().toISOString()
+              startIsoDate: startOfDay(new Date()).toISOString()
             })
           );
           navigate(-1);

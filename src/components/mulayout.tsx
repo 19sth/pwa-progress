@@ -46,6 +46,7 @@ export default function MuLayout() {
   /* eslint-disable */
   const notifications = [
     useSelector((state: RootState) => state.tasks),
+    useSelector((state: RootState) => state.taskLogs),
   ] as INotifyingState[];
   /* eslint-enable */
 

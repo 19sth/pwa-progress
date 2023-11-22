@@ -1,8 +1,15 @@
-import { ChevronLeft, ChevronRight, DoDisturb } from "@mui/icons-material";
+import {
+  CheckCircleOutline,
+  ChevronLeft,
+  ChevronRight,
+  RadioButtonUnchecked,
+  Refresh
+} from "@mui/icons-material";
 import {
   Button,
   ButtonGroup,
   Container,
+  Fade,
   FormControl,
   IconButton,
   InputLabel,
@@ -10,14 +17,15 @@ import {
   Modal,
   OutlinedInput,
   Select,
-  SvgIconTypeMap
+  SvgIconTypeMap,
 } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { addDays, format, startOfDay } from "date-fns";
+import { addDays, format, getDay, startOfDay } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePageState } from "../redux/slicePage";
 import { ITaskLog, addTaskLog } from "../redux/sliceTaskLogs";
+import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
 
 interface IStep {
@@ -25,6 +33,12 @@ interface IStep {
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
   color: string;
   slotId: number;
+}
+
+interface ITaskAnalytics {
+  task: ITask;
+  completed: number;
+  total: number;
 }
 
 function getCurrentSlot() {
@@ -54,9 +68,46 @@ function convertSlotToTimeString(slotId: number) {
   return timeString;
 }
 
+function getPossibleTasks(tasks: ITask[], targetDate: Date) {
+  const targetIsoDate = targetDate.toISOString();
+  return tasks.filter(
+    (e) => e.startIsoDate <= targetIsoDate && e.days.includes(getDay(targetDate))
+  );
+}
+
+function calculateDailyTaskAnalytics(
+  tasks: ITask[],
+  taskLogs: ITaskLog[],
+  targetDate: Date
+) {
+  const possibleTasks = getPossibleTasks(tasks, targetDate);
+  const targetIsoDate = targetDate.toISOString();
+  const dailyTaskLogs = taskLogs.filter((e) => e.dateIso === targetIsoDate);
+
+  const taskAnalyticsList = [] as ITaskAnalytics[];
+  for (let i = 0; i < possibleTasks.length; i++) {
+    const completed =
+      dailyTaskLogs.filter((e) => e.taskId === possibleTasks[i].id).length * 20;
+    const total = possibleTasks[i].duration;
+    taskAnalyticsList.push({
+      task: possibleTasks[i],
+      completed,
+      total,
+    });
+  }
+
+  return taskAnalyticsList
+}
+
 export default function Main() {
   const [targetDate, setTargetDate] = useState(startOfDay(new Date()));
+  const [showTargetDate, setShowTargetDate] = useState(true);
+  const [showTimeSlotLine, setShowTimeSlotLine] = useState(false);
+  const [dailyTaskAnalytics, setDailyTaskAnalytics] = useState([] as ITaskAnalytics[]);
   const tasks = useSelector((rootState: RootState) => rootState.tasks.tasks);
+  const taskLogs = useSelector(
+    (rootState: RootState) => rootState.taskLogs.taskLogs
+  );
   const stepperRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [steps, setSteps] = useState([] as IStep[]);
@@ -66,23 +117,44 @@ export default function Main() {
   useEffect(() => {
     const localSteps = [] as IStep[];
     const currentSlot = getCurrentSlot();
+    const lTaskLogs = taskLogs.filter(
+      (e) => e.dateIso === targetDate.toISOString()
+    );
+
     for (let i = 0; i < 24 * 3; i++) {
+      const lTaskLog = lTaskLogs.filter((e) => e.slot === i);
+      let iconColor = i >= currentSlot ? "#888" : "#ddd";
+      let icon = RadioButtonUnchecked;
+
+      if (lTaskLog.length > 0) {
+        const lTask = tasks.filter((e) => e.id === lTaskLog[0].taskId)[0];
+        icon = CheckCircleOutline;
+        iconColor = lTask.color;
+      }
+
       const timeString = convertSlotToTimeString(i);
       localSteps.push({
         label: timeString,
-        icon: DoDisturb,
-        color: "#ccc",
+        icon,
+        color: iconColor,
         slotId: i,
       });
     }
+
     setSteps(localSteps);
     setTimeout(() => {
       const stepperContainer = stepperRef.current;
       if (stepperContainer) {
         stepperContainer.scrollLeft = 80 * currentSlot;
       }
-    }, 500);
-  }, []);
+      setTimeout(() => {
+        setShowTimeSlotLine(true);
+      }, 700);
+    }, 100);
+
+    setDailyTaskAnalytics(calculateDailyTaskAnalytics(tasks,lTaskLogs,targetDate))
+
+  }, [taskLogs, tasks, targetDate]);
 
   useEffect(() => {
     dispatch(
@@ -99,21 +171,44 @@ export default function Main() {
   return (
     <div>
       <div className="w-full flex justify-between items-center mb-5">
-        <div className="font-bold text-lg align-middle">
-          {format(targetDate, "LLLL do, E")}
-        </div>
+        <Fade in={showTargetDate}>
+          <div className="font-bold text-lg align-middle transition-all">
+            {format(targetDate, "LLLL do, E")}
+          </div>
+        </Fade>
 
         <div>
           <IconButton
             onClick={() => {
-              setTargetDate(addDays(targetDate, -1));
+              setShowTargetDate(false);
+              setTimeout(() => {
+                setTargetDate(addDays(targetDate, -1));
+                setShowTargetDate(true);
+              }, 200);
             }}
           >
             <ChevronLeft />
           </IconButton>
+
           <IconButton
             onClick={() => {
-              setTargetDate(addDays(targetDate, 1));
+              setShowTargetDate(false);
+              setTimeout(() => {
+                setTargetDate(startOfDay(new Date()));
+                setShowTargetDate(true);
+              }, 200);
+            }}
+          >
+            <Refresh />
+          </IconButton>
+
+          <IconButton
+            onClick={() => {
+              setShowTargetDate(false);
+              setTimeout(() => {
+                setTargetDate(addDays(targetDate, 1));
+                setShowTargetDate(true);
+              }, 200);
             }}
           >
             <ChevronRight />
@@ -121,28 +216,41 @@ export default function Main() {
         </div>
       </div>
 
-      <div className="border-t-2 border-b-2">
-        <div className="overflow-y-auto flex py-5" ref={stepperRef}>
-          {steps.map((e) => (
-            <div
-              className="h-20 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
-              style={{ minWidth: "4rem" }}
-              onClick={() => {
-                setTaskLog({
-                  taskId: 0,
-                  slot: e.slotId,
-                  dateIso: targetDate.toISOString()
-                })
-                setShowModal(true);
-              }}
-            >
-              <div className="font-bold">{e.label}</div>
-              <div className="flex justify-center items-center mt-1">
-                <e.icon fontSize="large" sx={{ color: e.color }} />
+      <Fade in={showTimeSlotLine}>
+        <div className="border-t-2 border-b-2">
+          <div
+            className="overflow-y-auto flex py-5 scroll-smooth"
+            ref={stepperRef}
+          >
+            {steps.map((e) => (
+              <div
+                className="h-20 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
+                style={{ minWidth: "4rem" }}
+                onClick={() => {
+                  setTaskLog({
+                    taskId: 0,
+                    slot: e.slotId,
+                    dateIso: targetDate.toISOString(),
+                  });
+                  setShowModal(true);
+                }}
+              >
+                <div className="font-bold">{e.label}</div>
+                <div className="flex justify-center items-center mt-1">
+                  <e.icon fontSize="large" sx={{ color: e.color }} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+      </Fade>
+
+      <div>
+        {dailyTaskAnalytics.map(e=>(
+          <div>
+            {e.task.name} {e.completed} {e.total}
+          </div>
+        ))}
       </div>
 
       <Modal
@@ -174,7 +282,7 @@ export default function Main() {
                 });
               }}
             >
-              {tasks.map((e) => (
+              {getPossibleTasks(tasks, targetDate).map((e) => (
                 <MenuItem value={e.id}>{e.name}</MenuItem>
               ))}
             </Select>
@@ -182,10 +290,13 @@ export default function Main() {
 
           <ButtonGroup variant="text" className="mt-5 ms-auto">
             <Button color="error">Clear</Button>
-            <Button color="success" onClick={() => {
-              dispatch(addTaskLog(taskLog));
-              setShowModal(false);
-            }}>
+            <Button
+              color="success"
+              onClick={() => {
+                dispatch(addTaskLog(taskLog));
+                setShowModal(false);
+              }}
+            >
               Save
             </Button>
           </ButtonGroup>

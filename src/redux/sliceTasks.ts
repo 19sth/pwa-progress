@@ -29,7 +29,7 @@ export const tasksSlice = createSlice({
       const lTasks = state.tasks;
       const lNewTask = action.payload;
       lNewTask.id = 0
-      if (lTasks.length > 1) {
+      if (lTasks.length > 0) {
         lNewTask.id = lTasks[lTasks.length-1].id as number + 1
       }
       lTasks.push(lNewTask);
