@@ -1,11 +1,11 @@
+import { Button, ButtonGroup, Container, Modal, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { RootState } from "../redux/store";
-import { useEffect, useState } from "react";
-import { ITask, removeTask } from "../redux/sliceTasks";
-import { updatePageState } from "../redux/slicePage";
-import { Box, Button, ButtonGroup, Container, Modal, Typography } from "@mui/material";
 import MuTakoz from "../components/mutakoz";
+import { updatePageState } from "../redux/slicePage";
+import { ITask, removeTask } from "../redux/sliceTasks";
+import { RootState } from "../redux/store";
 
 export default function TaskDetail() {
   const { id } = useParams();
