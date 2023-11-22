@@ -29,13 +29,12 @@ import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { addDays, format, getDay, startOfDay } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
 import { ITaskLog, addTaskLog } from "../redux/sliceTaskLogs";
 import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
-import { DAYS } from "../utils/constants";
-import { Link } from "react-router-dom";
-import MuTakoz from "../components/mutakoz";
 
 interface IStep {
   label: string;
