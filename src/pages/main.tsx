@@ -2,10 +2,8 @@ import {
   CheckCircleOutline,
   ChevronLeft,
   ChevronRight,
-  Circle,
-  LightMode,
   RadioButtonUnchecked,
-  Refresh,
+  Refresh
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -33,7 +31,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
-import { ITaskLog, upsertTaskLog, removeTaskLog } from "../redux/sliceTaskLogs";
+import { ITaskLog, removeTaskLog, upsertTaskLog } from "../redux/sliceTaskLogs";
 import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
 
