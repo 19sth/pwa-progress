@@ -6,7 +6,7 @@ import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
 import { ITask, removeTask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
-import { removeTaskLogByTaskId } from "../redux/sliceTaskLogs";
+import { removeTaskLogsByTaskId } from "../redux/sliceTaskLogs";
 
 export default function TaskDetail() {
   const { id } = useParams();
@@ -64,7 +64,7 @@ export default function TaskDetail() {
           <ButtonGroup variant="text">
             <Button color="error" onClick={()=>{
                 dispatch(removeTask(parseInt(id as string)))
-                dispatch(removeTaskLogByTaskId(parseInt(id as string)))
+                dispatch(removeTaskLogsByTaskId(parseInt(id as string)))
                 navigate(-1);
             }}>Delete</Button>
             <Button

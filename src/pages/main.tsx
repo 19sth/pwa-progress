@@ -2,6 +2,7 @@ import {
   CheckCircleOutline,
   ChevronLeft,
   ChevronRight,
+  Circle,
   LightMode,
   RadioButtonUnchecked,
   Refresh,
@@ -32,7 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
-import { ITaskLog, addTaskLog } from "../redux/sliceTaskLogs";
+import { ITaskLog, addTaskLog, removeTaskLog } from "../redux/sliceTaskLogs";
 import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
 
@@ -126,6 +127,17 @@ export default function Main() {
   const [taskLog, setTaskLog] = useState({} as ITaskLog);
 
   useEffect(() => {
+    if (steps.length > 0 && showTimeSlotLine === false) {
+      const stepperContainer = stepperRef.current;
+      const currentSlot = getCurrentSlot();
+      if (stepperContainer) {
+        stepperContainer.scrollLeft = 80 * currentSlot;
+      }
+      setShowTimeSlotLine(true);
+    }
+  }, [steps, showTimeSlotLine]);
+
+  useEffect(() => {
     const localSteps = [] as IStep[];
     const currentSlot = getCurrentSlot();
     const lTaskLogs = taskLogs.filter(
@@ -153,15 +165,6 @@ export default function Main() {
     }
 
     setSteps(localSteps);
-    setTimeout(() => {
-      const stepperContainer = stepperRef.current;
-      if (stepperContainer) {
-        stepperContainer.scrollLeft = 80 * currentSlot;
-      }
-      setTimeout(() => {
-        setShowTimeSlotLine(true);
-      }, 700);
-    }, 100);
 
     setDailyTaskAnalytics(
       calculateDailyTaskAnalytics(tasks, lTaskLogs, targetDate)
@@ -230,12 +233,10 @@ export default function Main() {
 
       <Fade in={showTimeSlotLine}>
         <div className="border-t-2 border-b-2">
-          <div
-            className="overflow-y-auto flex py-5 scroll-smooth"
-            ref={stepperRef}
-          >
+          <div className="overflow-y-auto flex py-5" ref={stepperRef}>
             {steps.map((e) => (
               <div
+                key={`time_slot_line_item_${e.slotId}`}
                 className="h-20 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
                 style={{ minWidth: "4rem" }}
                 onClick={() => {
@@ -257,27 +258,32 @@ export default function Main() {
         </div>
       </Fade>
 
-      <MuTakoz/>
+      <MuTakoz />
 
-      <List>
-        {dailyTaskAnalytics.map((e) => (
-          <Link key={`task_item_${e.task.id}`} to={`./task-detail/${e.task.id}`}>
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: e.task.color }}>
-                  <LightMode sx={{ color: "black" }} />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={e.task.name}
-                secondary={
-                  e.completed.toString() + " / " + e.total.toString()
-                }
-              />
-            </ListItemButton>
-          </Link>
-        ))}
-      </List>
+      <Fade in={showTargetDate}>
+        <List>
+          {dailyTaskAnalytics.map((e) => (
+            <Link
+              key={`task_item_${e.task.id}`}
+              to={`./task-detail/${e.task.id}`}
+            >
+              <ListItemButton>
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: e.task.color }}>
+                    <RadioButtonUnchecked sx={{ color: "black" }} />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={e.task.name}
+                  secondary={
+                    e.completed.toString() + " / " + e.total.toString()
+                  }
+                />
+              </ListItemButton>
+            </Link>
+          ))}
+        </List>
+      </Fade>
 
       <Modal
         open={showModal}
@@ -309,13 +315,22 @@ export default function Main() {
               }}
             >
               {getPossibleTasks(tasks, targetDate).map((e) => (
-                <MenuItem value={e.id}>{e.name}</MenuItem>
+                <MenuItem key={`modal_task_select_${e.id}`} value={e.id}>
+                  {e.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <ButtonGroup variant="text" className="mt-5 ms-auto">
-            <Button color="error">Clear</Button>
+            <Button
+              color="error"
+              onClick={() => {
+                dispatch(removeTaskLog(taskLog.id || -1));
+              }}
+            >
+              Clear
+            </Button>
             <Button
               color="success"
               onClick={() => {

@@ -16,14 +16,15 @@ import { APP_NAME } from "../utils/constants";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const iconsMap = {
   Info: icons.Info,
   Save: icons.Save,
   Add: icons.AddCircle,
   List: icons.FormatListBulleted,
-  ImportExport: icons.ImportExport
+  ImportExport: icons.ImportExport,
 } as Record<string, OverridableComponent<SvgIconTypeMap<{}, "svg">>>;
 
 export interface INavItem {
@@ -41,6 +42,7 @@ export default function MuLayout() {
   const [notificationMessage, setNotificationMessage] = useState(
     undefined as string | undefined
   );
+  const location = useLocation();
   const pageState = useSelector((state: RootState) => state.page);
 
   /* eslint-disable */
@@ -102,7 +104,29 @@ export default function MuLayout() {
       </AppBar>
 
       <Container maxWidth="sm" className="min-h-screen pt-20">
-        <Outlet />
+        <motion.div
+          key={location.pathname}
+          initial="initial"
+          animate="in"
+          variants={{
+            initial: {
+              opacity: 0,
+            },
+            in: {
+              opacity: 1,
+            },
+            out: {
+              opacity: 0,
+            },
+          }}
+          transition={{
+            type: "tween",
+            ease: "linear",
+            duration: 0.5,
+          }}
+        >
+          <Outlet />
+        </motion.div>
         <Snackbar
           className="mb-10"
           open={notify}

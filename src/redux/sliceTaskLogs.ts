@@ -48,7 +48,7 @@ export const taskLogSlice = createSlice({
       state.notificationMessage = "No task found with given id.";
       state.notificationIsoDt = new Date().toISOString();
     },
-    removeTaskLogByTaskId: (state, action: PayloadAction<number>) => {
+    removeTaskLogsByTaskId: (state, action: PayloadAction<number>) => {
       const lTaskLogs = state.taskLogs;
       for (let i = lTaskLogs.length - 1; i > -1; i--) {
         if (lTaskLogs[i].taskId === action.payload) {
@@ -59,6 +59,6 @@ export const taskLogSlice = createSlice({
   },
 });
 
-export const { addTaskLog, removeTaskLog, removeTaskLogByTaskId } = taskLogSlice.actions;
+export const { addTaskLog, removeTaskLog, removeTaskLogsByTaskId } = taskLogSlice.actions;
 
 export default taskLogSlice.reducer;
