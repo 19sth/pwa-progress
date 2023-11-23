@@ -122,7 +122,7 @@ export default function MuLayout() {
           transition={{
             type: "tween",
             ease: "linear",
-            duration: 0.5,
+            duration: 0.3,
           }}
         >
           <Outlet />

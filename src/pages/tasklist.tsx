@@ -1,4 +1,4 @@
-import { LightMode } from "@mui/icons-material";
+import { LightMode, RadioButtonUnchecked } from "@mui/icons-material";
 import {
   Avatar,
   List,
@@ -38,7 +38,7 @@ export default function TaskList() {
             <ListItemButton>
               <ListItemAvatar>
                 <Avatar sx={{bgcolor: e.color}}>
-                  <LightMode sx={{color: "black"}}/>
+                  <RadioButtonUnchecked sx={{color: "black"}}/>
                 </Avatar>
               </ListItemAvatar>
               <ListItemText

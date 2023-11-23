@@ -33,7 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
-import { ITaskLog, addTaskLog, removeTaskLog } from "../redux/sliceTaskLogs";
+import { ITaskLog, upsertTaskLog, removeTaskLog } from "../redux/sliceTaskLogs";
 import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
 
@@ -240,11 +240,18 @@ export default function Main() {
                 className="h-20 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
                 style={{ minWidth: "4rem" }}
                 onClick={() => {
-                  setTaskLog({
-                    taskId: 0,
-                    slot: e.slotId,
-                    dateIso: targetDate.toISOString(),
-                  });
+                  const lTaskLogs = taskLogs
+                    .filter((le) => le.dateIso === targetDate.toISOString())
+                    .filter((le) => e.slotId === le.slot);
+                  const lTaskLog =
+                    lTaskLogs.length > 0
+                      ? lTaskLogs[0] as ITaskLog
+                      : {
+                          taskId: 0,
+                          slot: e.slotId,
+                          dateIso: targetDate.toISOString(),
+                        } as ITaskLog;
+                  setTaskLog(lTaskLog);
                   setShowModal(true);
                 }}
               >
@@ -270,7 +277,11 @@ export default function Main() {
               <ListItemButton>
                 <ListItemAvatar>
                   <Avatar sx={{ bgcolor: e.task.color }}>
-                    <RadioButtonUnchecked sx={{ color: "black" }} />
+                    {e.completed >= e.total ? (
+                      <CheckCircleOutline sx={{ color: "black" }} />
+                    ) : (
+                      <RadioButtonUnchecked sx={{ color: "black" }} />
+                    )}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
@@ -327,6 +338,7 @@ export default function Main() {
               color="error"
               onClick={() => {
                 dispatch(removeTaskLog(taskLog.id || -1));
+                setShowModal(false);
               }}
             >
               Clear
@@ -334,7 +346,7 @@ export default function Main() {
             <Button
               color="success"
               onClick={() => {
-                dispatch(addTaskLog(taskLog));
+                dispatch(upsertTaskLog(taskLog));
                 setShowModal(false);
               }}
             >

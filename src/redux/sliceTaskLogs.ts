@@ -23,15 +23,24 @@ export const taskLogSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    addTaskLog: (state, action: PayloadAction<ITaskLog>) => {
+    upsertTaskLog: (state, action: PayloadAction<ITaskLog>) => {
       const lTaskLogs = state.taskLogs;
       const lNewTask = action.payload;
-      lNewTask.id = 0;
-      if (lTaskLogs.length > 0) {
-        lNewTask.id = (lTaskLogs[lTaskLogs.length - 1].id as number) + 1;
+      if(lNewTask.id) {
+        for (let i=0; i<lTaskLogs.length; i++) {
+          if (lTaskLogs[i].id === lNewTask.id) {
+            lTaskLogs[i] = lNewTask;
+            break;
+          }
+        }
+      } else {
+        lNewTask.id = 0;
+        if (lTaskLogs.length > 0) {
+          lNewTask.id = (lTaskLogs[lTaskLogs.length - 1].id as number) + 1;
+        }
+        lTaskLogs.push(lNewTask);
       }
-      lTaskLogs.push(lNewTask);
-      state.notificationMessage = "New task created successfuly.";
+      state.notificationMessage = "Task upserted successfuly.";
       state.taskLogs = lTaskLogs;
       state.notificationIsoDt = new Date().toISOString();
     },
@@ -59,6 +68,6 @@ export const taskLogSlice = createSlice({
   },
 });
 
-export const { addTaskLog, removeTaskLog, removeTaskLogsByTaskId } = taskLogSlice.actions;
+export const { upsertTaskLog, removeTaskLog, removeTaskLogsByTaskId } = taskLogSlice.actions;
 
 export default taskLogSlice.reducer;
