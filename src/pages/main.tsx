@@ -3,7 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RadioButtonUnchecked,
-  Refresh
+  Refresh,
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -25,15 +25,21 @@ import {
   SvgIconTypeMap,
 } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { addDays, format, getDay, startOfDay } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
 import { ITaskLog, removeTaskLog, upsertTaskLog } from "../redux/sliceTaskLogs";
-import { ITask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
+import {
+  ITaskAnalytics,
+  calculateDailyTaskAnalytics,
+  convertSlotToTimeString,
+  getCurrentSlot,
+  getPossibleTasks,
+} from "../utils/funcs";
 
 interface IStep {
   label: string;
@@ -42,72 +48,8 @@ interface IStep {
   slotId: number;
 }
 
-interface ITaskAnalytics {
-  task: ITask;
-  completed: number;
-  total: number;
-}
-
-function getCurrentSlot() {
-  let slotId = 0;
-  const now = new Date();
-  for (let i = 0; i < 24; i++) {
-    if (now.getHours() === i) {
-      const mins = now.getMinutes();
-      slotId = i * 3;
-      if (mins > 39) {
-        slotId += 2;
-      } else if (mins > 19) {
-        slotId += 1;
-      }
-      break;
-    }
-  }
-  return slotId;
-}
-
-function convertSlotToTimeString(slotId: number) {
-  const hour = Math.floor(slotId / 3);
-  const minute = (slotId - hour * 3) * 20;
-  const timeString = `${String(hour).padStart(2, "0")}:${String(
-    minute
-  ).padStart(2, "0")}`;
-  return timeString;
-}
-
-function getPossibleTasks(tasks: ITask[], targetDate: Date) {
-  const targetIsoDate = targetDate.toISOString();
-  return tasks.filter(
-    (e) =>
-      e.startIsoDate <= targetIsoDate && e.days.includes(getDay(targetDate))
-  );
-}
-
-function calculateDailyTaskAnalytics(
-  tasks: ITask[],
-  taskLogs: ITaskLog[],
-  targetDate: Date
-) {
-  const possibleTasks = getPossibleTasks(tasks, targetDate);
-  const targetIsoDate = targetDate.toISOString();
-  const dailyTaskLogs = taskLogs.filter((e) => e.dateIso === targetIsoDate);
-
-  const taskAnalyticsList = [] as ITaskAnalytics[];
-  for (let i = 0; i < possibleTasks.length; i++) {
-    const completed =
-      dailyTaskLogs.filter((e) => e.taskId === possibleTasks[i].id).length * 20;
-    const total = possibleTasks[i].duration;
-    taskAnalyticsList.push({
-      task: possibleTasks[i],
-      completed,
-      total,
-    });
-  }
-
-  return taskAnalyticsList;
-}
-
 export default function Main() {
+  const location: { state: { dateIso: string } } = useLocation();
   const [targetDate, setTargetDate] = useState(startOfDay(new Date()));
   const [showTargetDate, setShowTargetDate] = useState(true);
   const [showTimeSlotLine, setShowTimeSlotLine] = useState(false);
@@ -125,11 +67,17 @@ export default function Main() {
   const [taskLog, setTaskLog] = useState({} as ITaskLog);
 
   useEffect(() => {
+    if (location && location.state && location.state.dateIso) {
+      setTargetDate(new Date(location.state.dateIso));
+    }
+  }, [location]);
+
+  useEffect(() => {
     if (steps.length > 0 && showTimeSlotLine === false) {
       const stepperContainer = stepperRef.current;
-      const currentSlot = getCurrentSlot();
+      const currentSlot = getCurrentSlot(targetDate);
       if (stepperContainer) {
-        stepperContainer.scrollLeft = 80 * currentSlot;
+        stepperContainer.scrollLeft = 80 * (currentSlot - 2);
       }
       setShowTimeSlotLine(true);
     }
@@ -137,7 +85,7 @@ export default function Main() {
 
   useEffect(() => {
     const localSteps = [] as IStep[];
-    const currentSlot = getCurrentSlot();
+    const currentSlot = getCurrentSlot(targetDate);
     const lTaskLogs = taskLogs.filter(
       (e) => e.dateIso === targetDate.toISOString()
     );
@@ -243,12 +191,12 @@ export default function Main() {
                     .filter((le) => e.slotId === le.slot);
                   const lTaskLog =
                     lTaskLogs.length > 0
-                      ? lTaskLogs[0] as ITaskLog
-                      : {
+                      ? (lTaskLogs[0] as ITaskLog)
+                      : ({
                           taskId: 0,
                           slot: e.slotId,
                           dateIso: targetDate.toISOString(),
-                        } as ITaskLog;
+                        } as ITaskLog);
                   setTaskLog(lTaskLog);
                   setShowModal(true);
                 }}

@@ -1,4 +1,4 @@
-import { LightMode, RadioButtonUnchecked } from "@mui/icons-material";
+import { RadioButtonUnchecked } from "@mui/icons-material";
 import {
   Avatar,
   List,
