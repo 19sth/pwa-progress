@@ -72,15 +72,12 @@ export default function TaskDetail() {
   }
 
   return (
-    <div>
-      <Typography variant="h5" gutterBottom>
-        {targetTask.name}
-      </Typography>
-
-      <div className="w-full h-32 overflow-y-auto">
+    <div className="pt-5">
+      <div className="w-full h-36 overflow-y-auto border-t-2 border-b-2 py-3">
         <div className="flex no-wrap">
           {dailyAnalytics.map((e) => (
             <div
+              key={`date_${e.dateIso}`}
               className="h-25 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
               style={{ minWidth: "4rem" }}
               onClick={() => {
@@ -107,6 +104,10 @@ export default function TaskDetail() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="text-3xl font-semibold my-5 w-full">
+        {targetTask.name}
       </div>
 
       <Button
