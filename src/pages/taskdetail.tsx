@@ -5,28 +5,28 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import CircularProgress, {
-  CircularProgressProps,
-} from "@mui/material/CircularProgress";
-import { useEffect, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import { format } from "date-fns";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import MuTakoz from "../components/mutakoz";
 import { updatePageState } from "../redux/slicePage";
+import { removeTaskLogsByTaskId } from "../redux/sliceTaskLogs";
 import { ITask, removeTask } from "../redux/sliceTasks";
 import { RootState } from "../redux/store";
-import { ITaskLog, removeTaskLogsByTaskId } from "../redux/sliceTaskLogs";
 import {
   ITaskAnalytics,
   calculateDailyTaskAnalytics,
   getPossibleDates,
 } from "../utils/funcs";
-import { format } from "date-fns";
 
 export default function TaskDetail() {
+  const timelineRef = useRef<HTMLDivElement>(null);
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [todaysIndex, setTodaysIndex] = useState(-1);
   const tasks = useSelector((rootState: RootState) => rootState.tasks.tasks);
   const taskLogs = useSelector(
     (rootState: RootState) => rootState.taskLogs.taskLogs
@@ -36,6 +36,15 @@ export default function TaskDetail() {
   const [dailyAnalytics, setDailyTaskAnalytics] = useState(
     [] as ITaskAnalytics[]
   );
+  const [totalPercentage, setTotalPercentage] = useState(0);
+  const [endDate, setEndDate] = useState(new Date());
+
+  useEffect(() => {
+    const timelineContainer = timelineRef.current;
+    if (timelineContainer) {
+      timelineContainer.scrollLeft = 80 * (todaysIndex - 1);
+    }
+  }, [todaysIndex]);
 
   useEffect(() => {
     const taskId = parseInt(id as string);
@@ -44,8 +53,11 @@ export default function TaskDetail() {
     setTargetTask(localTask);
 
     if (localTask !== undefined) {
-      const possibleDates = getPossibleDates(localTask);
+      const { possibleDates, todayIndex } = getPossibleDates(localTask);
+      setTodaysIndex(todayIndex);
       const localDailyAnalytics = [] as ITaskAnalytics[];
+      const totalPercentage = 100 * 30;
+      let completedPercentage = 0;
       possibleDates.forEach((e) => {
         const analytics = calculateDailyTaskAnalytics(
           [localTask],
@@ -53,8 +65,13 @@ export default function TaskDetail() {
           new Date(e)
         )[0];
         localDailyAnalytics.push(analytics);
+        completedPercentage += Math.min(analytics.pct, 100);
       });
       setDailyTaskAnalytics(localDailyAnalytics);
+      setTotalPercentage(
+        Math.floor((completedPercentage / totalPercentage) * 100)
+      );
+      setEndDate(new Date(possibleDates[possibleDates.length - 1]));
     }
   }, [tasks, id, taskLogs]);
 
@@ -73,7 +90,10 @@ export default function TaskDetail() {
 
   return (
     <div className="pt-5">
-      <div className="w-full h-36 overflow-y-auto border-t-2 border-b-2 py-3">
+      <div
+        className="w-full h-36 overflow-y-auto border-t-2 border-b-2 py-3"
+        ref={timelineRef}
+      >
         <div className="flex no-wrap">
           {dailyAnalytics.map((e) => (
             <div
@@ -107,7 +127,22 @@ export default function TaskDetail() {
       </div>
 
       <div className="text-3xl font-semibold my-5 w-full">
-        {targetTask.name}
+        <span style={{ borderBottom: "5px solid " + targetTask.color }}>
+          {targetTask.name}
+        </span>
+      </div>
+
+      <div className="flex">
+        <div className="w-32">Start Date</div>
+        <div className="flex-1">
+          {format(new Date(targetTask.startIsoDate || 0), "MMM d, y")}
+        </div>
+      </div>
+      <div className="flex">
+        <div className="w-32">End Date</div>
+        <div className="flex-1">
+          {format(new Date(endDate || 0), "MMM d, y")}
+        </div>
       </div>
 
       <Button

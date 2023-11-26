@@ -56,16 +56,21 @@ export function getPossibleTasks(tasks: ITask[], targetDate: Date) {
 }
 
 export function getPossibleDates(task: ITask) {
-    const possibleDays = [];
+    const possibleDates = [];
+    const today = startOfDay(new Date());
+    let todayIndex = -1;
     let pivotDate = new Date(task.startIsoDate);
-    while (possibleDays.length < 30) {
+    while (possibleDates.length < 30) {
         const weekDay = getDay(pivotDate);
         if (task.days.includes(weekDay)) {
-            possibleDays.push(pivotDate.toISOString());
+          possibleDates.push(pivotDate.toISOString());
+            if (todayIndex == -1 && today <= pivotDate) {
+               todayIndex = possibleDates.length-1;
+            }
         }
         pivotDate = addDays(pivotDate, 1)
     }
-    return possibleDays;
+    return {possibleDates, todayIndex};
 }
 
 export function calculateDailyTaskAnalytics(
