@@ -2,6 +2,7 @@ import {
   Button,
   ButtonGroup,
   Container,
+  LinearProgress,
   Modal,
   Typography,
 } from "@mui/material";
@@ -95,10 +96,10 @@ export default function TaskDetail() {
         ref={timelineRef}
       >
         <div className="flex no-wrap">
-          {dailyAnalytics.map((e) => (
+          {dailyAnalytics.map((e, ix) => (
             <div
               key={`date_${e.dateIso}`}
-              className="h-25 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200"
+              className={`h-25 mx-2 p-2 rounded-lg bg-gray-100 shadow-sm cursor-pointer hover:bg-gray-200 ${(ix===todaysIndex)?" brightness-90":""}`}
               style={{ minWidth: "4rem" }}
               onClick={() => {
                 navigate("../", { state: { dateIso: e.dateIso } });
@@ -132,18 +133,25 @@ export default function TaskDetail() {
         </span>
       </div>
 
-      <div className="flex">
-        <div className="w-32">Start Date</div>
-        <div className="flex-1">
+      <div className="grid grid-cols-5 gap-2 text-xl my-5">
+        <div className="col-span-2">Start Date</div>
+        <div className="col-span-3 font-bold">
           {format(new Date(targetTask.startIsoDate || 0), "MMM d, y")}
         </div>
-      </div>
-      <div className="flex">
-        <div className="w-32">End Date</div>
-        <div className="flex-1">
+        <div className="col-span-2">End Date</div>
+        <div className="col-span-3 font-bold">
           {format(new Date(endDate || 0), "MMM d, y")}
         </div>
+        <div className="col-span-2">Progress</div>
+        <div className="col-span-3 font-bold">
+          {totalPercentage} %
+        </div>
+        <div className="col-span-5" style={{color: targetTask.color}}>
+          <LinearProgress variant="determinate" className="brightness-75 shadow rounded-full" value={totalPercentage} color="inherit" sx={{height: 20}}/>
+        </div>
       </div>
+
+      <MuTakoz/>
 
       <Button
         onClick={() => {

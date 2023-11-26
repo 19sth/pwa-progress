@@ -25,7 +25,7 @@ import {
   SvgIconTypeMap,
 } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { addDays, format, startOfDay } from "date-fns";
+import { addDays, format, isAfter, isBefore, startOfDay } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -215,30 +215,40 @@ export default function Main() {
 
       <Fade in={showTargetDate}>
         <List>
-          {dailyTaskAnalytics.map((e) => (
-            <Link
-              key={`task_item_${e.task.id}`}
-              to={`./task-detail/${e.task.id}`}
-            >
-              <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar sx={{ bgcolor: e.task.color }}>
-                    {e.completed >= e.total ? (
-                      <CheckCircleOutline sx={{ color: "black" }} />
-                    ) : (
-                      <RadioButtonUnchecked sx={{ color: "black" }} />
-                    )}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={e.task.name}
-                  secondary={
-                    e.completed.toString() + " / " + e.total.toString()
-                  }
-                />
-              </ListItemButton>
-            </Link>
-          ))}
+          {dailyTaskAnalytics.length < 1 &&
+          !isBefore(targetDate, startOfDay(new Date())) ? (
+            <div className="text-center text-lg">
+              There is no task. <br></br>
+              <Link className="font-bold underline" to={"./task-add"}>
+                Click to add new one.
+              </Link>
+            </div>
+          ) : (
+            dailyTaskAnalytics.map((e) => (
+              <Link
+                key={`task_item_${e.task.id}`}
+                to={`./task-detail/${e.task.id}`}
+              >
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: e.task.color }}>
+                      {e.completed >= e.total ? (
+                        <CheckCircleOutline sx={{ color: "black" }} />
+                      ) : (
+                        <RadioButtonUnchecked sx={{ color: "black" }} />
+                      )}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={e.task.name}
+                    secondary={
+                      e.completed.toString() + " / " + e.total.toString()
+                    }
+                  />
+                </ListItemButton>
+              </Link>
+            ))
+          )}
         </List>
       </Fade>
 
