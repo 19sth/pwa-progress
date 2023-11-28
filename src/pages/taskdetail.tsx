@@ -92,7 +92,7 @@ export default function TaskDetail() {
   return (
     <div className="pt-5">
       <div
-        className="w-full h-36 overflow-y-auto border-t-2 border-b-2 py-3"
+        className="w-full h-40 overflow-y-auto border-t-2 border-b-2 py-3"
         ref={timelineRef}
       >
         <div className="flex no-wrap">
