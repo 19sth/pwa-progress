@@ -15,10 +15,9 @@ import MuTakoz from "../components/mutakoz";
 import { useDispatch } from "react-redux";
 import { addTask } from "../redux/sliceTasks";
 import { useNavigate } from "react-router-dom";
-import CircleIcon from '@mui/icons-material/Circle';
+import CircleIcon from "@mui/icons-material/Circle";
 import { DAYS } from "../utils/constants";
-import { startOfDay } from "date-fns";
-
+import { addDays, format, startOfDay } from "date-fns";
 
 const colors = [
   { label: "Red", value: "#ffb3b3" },
@@ -31,10 +30,35 @@ const colors = [
   { label: "Pink", value: "#ffd9eb" },
 ];
 
+const dateOptions = () => {
+  const options = [];
+  const today = startOfDay(new Date());
+  const labels = [
+    "The day before",
+    "Yesterday",
+    "Today",
+    "Tomorrow",
+    "The day after"
+  ]
+
+  for (let i = -2; i < 3; i++) {
+    const lTargetDate = addDays(today,i)
+    options.push(
+      <MenuItem
+        key={`menu_item_color_${lTargetDate.getTime()}`}
+        value={lTargetDate.toISOString()}
+      >
+        <span>{ labels[i+2] }</span>
+      </MenuItem>
+    );
+  }
+  return options
+}
 
 export default function TaskAdd() {
   const [name, setName] = useState("");
   const [color, setColor] = useState(colors[0].value);
+  const [startDay, setStartDay] = useState(startOfDay(new Date()).toISOString());
   const [selectedDays, setSelectedDays] = useState([] as number[]);
   const [duration, setDuration] = useState(20);
   const dispatch = useDispatch();
@@ -97,20 +121,36 @@ export default function TaskAdd() {
           }}
           input={<OutlinedInput label="Color" />}
           renderValue={(color) => (
-            <Box>
-              {colors.filter(x=>x.value === color)[0].label}
-            </Box>
+            <Box>{colors.filter((x) => x.value === color)[0].label}</Box>
           )}
         >
           {colors.map((color) => (
-            <MenuItem key={`menu_item_color_${color.value}`} value={color.value}>
-              <CircleIcon sx={{color: color.value}} className="mr-3"/>
+            <MenuItem
+              key={`menu_item_color_${color.value}`}
+              value={color.value}
+            >
+              <CircleIcon sx={{ color: color.value }} className="mr-3" />
               <span>{color.label}</span>
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      <MuTakoz/>
+      <MuTakoz />
+
+      <FormControl className="w-full">
+        <InputLabel>Start Day</InputLabel>
+        <Select
+          value={startDay}
+          onChange={(e) => {
+            const val = e.target.value as string;
+            setStartDay(val);
+          }}
+          input={<OutlinedInput label="Start Day" />}
+        >
+          {dateOptions()}
+        </Select>
+      </FormControl>
+      <MuTakoz />
 
       <MuSlider
         defaultValue={60}
@@ -137,7 +177,7 @@ export default function TaskAdd() {
               days: selectedDays,
               duration,
               color,
-              startIsoDate: startOfDay(new Date()).toISOString()
+              startIsoDate: startDay
             })
           );
           navigate(-1);
